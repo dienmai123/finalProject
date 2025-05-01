@@ -2,11 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import pyotp, qrcode, io, base64
 from models import db, User
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 # Initialize Flask application
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///2fa.db'
-app.config['SECRET_KEY'] = 'your-very-secret-key-123'  # Change this for production!
+app.config['SECRET_KEY'] = os.environ['SECRET_KEY']  # Load secret key securely
 db.init_app(app)
 
 # Create database tables
@@ -39,12 +44,16 @@ def setup_2fa(username):
     user = User.query.filter_by(username=username).first()
     
     # Generate random secret
-    totp_secret = pyotp.random_base32()
-    user.totp_secret = totp_secret
-    db.session.commit()
+    if not user.get_totp_secret():
+        totp_secret = pyotp.random_base32()
+        user.set_totp_secret(totp_secret)
+        db.session.commit()
+    else:
+        totp_secret = user.get_totp_secret()
+
     
     # Generate QR Code
-    totp_uri = pyotp.totp.TOTP(totp_secret).provisioning_uri(
+    totp_uri = pyotp.TOTP(totp_secret).provisioning_uri(
         name=username,
         issuer_name="Secure 2FA App"
     )
@@ -74,7 +83,7 @@ def login():
         session['username'] = username
         session['temp_user_id'] = user.id
         
-        if user.totp_secret:
+        if user.get_totp_secret():
             return redirect(url_for('verify_2fa'))
         else:
             flash('Login successful (No 2FA enabled)')
@@ -92,7 +101,7 @@ def verify_2fa():
     
     if request.method == 'POST':
         otp = request.form['otp']
-        totp = pyotp.TOTP(user.totp_secret)
+        totp = pyotp.TOTP(user.get_totp_secret())
         
         if totp.verify(otp):
             session['authenticated'] = True
@@ -143,8 +152,7 @@ def forgot_password():
             token = user.generate_reset_token()
             db.session.commit()
             
-            # In a real application, you would send this link via email
-            # For demonstration, we'll just show it as a flash message
+            # For demonstration, display the reset link
             reset_link = url_for('reset_password', token=token, _external=True)
             flash(f'Password reset link (for demonstration): {reset_link}')
             return redirect(url_for('forgot_password'))

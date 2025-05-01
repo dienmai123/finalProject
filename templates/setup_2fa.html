@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup 2FA</title>
+</head>
+<body>
+    <h1>Scan QR Code with Authenticator App</h1>
+    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+    <p>Or enter secret manually: <code>{{ secret }}</code></p>
+    <a href="{{ url_for('login') }}">Proceed to Login</a>
+</body>
+</html>

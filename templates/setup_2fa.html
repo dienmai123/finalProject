@@ -1,12 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Setup 2FA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup 2FA - Secure Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --background-color: #f9fafb;
+            --card-bg: #ffffff;
+            --success-color: #059669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            background-image: linear-gradient(135deg, #f6f8ff 0%, #f9fafb 100%);
+        }
+
+        .setup-container {
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .setup-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+            border-radius: 3px;
+        }
+
+        .instructions {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .qr-container {
+            background-color: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .qr-container img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .secret-container {
+            background-color: var(--background-color);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: inline-block;
+        }
+
+        .secret-code {
+            font-family: monospace;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            background-color: var(--card-bg);
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+
+        .steps {
+            text-align: left;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .proceed-btn {
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .proceed-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 480px) {
+            .setup-container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .qr-container img {
+                max-width: 180px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Scan QR Code with Authenticator App</h1>
-    <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
-    <p>Or enter secret manually: <code>{{ secret }}</code></p>
-    <a href="{{ url_for('login') }}">Proceed to Login</a>
+    <div class="setup-container">
+        <h1>Setup Two-Factor Authentication</h1>
+        
+        <div class="instructions">
+            <p>Secure your account by setting up 2FA. Scan the QR code below with your authenticator app or enter the secret key manually.</p>
+        </div>
+
+        <div class="qr-container">
+            <img src="data:image/png;base64,{{ qr_code }}" alt="2FA QR Code">
+        </div>
+
+        <div class="secret-container">
+            <p style="color: var(--text-secondary); font-size: 0.875rem;">Manual Entry Secret Key:</p>
+            <div class="secret-code">{{ secret }}</div>
+        </div>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">Install an authenticator app like Google Authenticator, Microsoft Authenticator, or Authy on your mobile device.</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">Open the app and scan the QR code above or enter the secret key manually.</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">Once added, the app will generate a 6-digit code that you'll use to verify your identity during login.</div>
+            </div>
+        </div>
+
+        <a href="{{ url_for('login') }}" class="proceed-btn">Proceed to Login</a>
+    </div>
 </body>
 </html>

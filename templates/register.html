@@ -4,72 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Secure 2FA System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --error-color: #dc2626;
+            --background-color: #f9fafb;
+            --card-bg: #ffffff;
+            --success-color: #059669;
+        }
+
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 1rem;
+            background-image: linear-gradient(135deg, #f6f8ff 0%, #f9fafb 100%);
         }
+
         .register-container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 350px;
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+        }
+
+        .register-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
         h1 {
-            color: #2c3e50;
+            color: var(--text-primary);
             text-align: center;
-            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            position: relative;
         }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+            border-radius: 3px;
+        }
+
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
         }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #34495e;
+            color: var(--text-secondary);
             font-weight: 500;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
         }
+
         input {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            background-color: var(--background-color);
         }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+
+        input:focus + label {
+            color: var(--primary-color);
+        }
+
         button {
             width: 100%;
-            padding: 0.75rem;
-            background-color: #3498db;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
         }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            transition: transform 0.2s ease;
+        }
+
         button:hover {
-            background-color: #2980b9;
+            transform: translateY(-2px);
         }
+
+        button:hover::before {
+            transform: scale(1.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         .links {
-            margin-top: 1.5rem;
+            margin-top: 2rem;
             text-align: center;
+            font-size: 0.875rem;
         }
+
         .links a {
-            color: #3498db;
+            color: var(--primary-color);
             text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
         }
+
+        .links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.2s ease;
+        }
+
+        .links a:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
         .error {
-            color: #e74c3c;
+            color: var(--error-color);
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 0.875rem;
+            background-color: rgba(220, 38, 38, 0.1);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .success {
+            color: var(--success-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.875rem;
+            background-color: rgba(5, 150, 105, 0.1);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
         }
     </style>
 </head>

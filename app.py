@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pyotp, qrcode, io, base64
 from models import db, User
+from datetime import datetime
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -95,13 +96,36 @@ def verify_2fa():
         
         if totp.verify(otp):
             session['authenticated'] = True
-            flash('Login successful with 2FA!')
-            return redirect(url_for('login'))
+            session['user_id'] = user.id
+            session.pop('temp_user_id', None)
+            
+            # Update last login time
+            user.last_login = datetime.now()
+            db.session.commit()
+            
+            return redirect(url_for('dashboard'))
         else:
-            flash('Invalid OTP code')
+            flash('Invalid OTP code. Please try again.')
             return redirect(url_for('verify_2fa'))
     
     return render_template('verify_2fa.html')
+
+@app.route('/dashboard')
+def dashboard():
+    if not session.get('authenticated'):
+        return redirect(url_for('login'))
+    
+    user = User.query.get(session['user_id'])
+    last_login = user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else 'First login'
+    
+    return render_template('dashboard.html', 
+                         username=user.username,
+                         last_login=last_login)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
 
 # Home route
 @app.route('/')

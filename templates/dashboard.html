@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Secure 2FA System</title>
+    <title>Dashboard - Secure Authentication</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -14,6 +14,8 @@
             --border-color: #e5e7eb;
             --background-color: #f9fafb;
             --card-bg: #ffffff;
+            --success-color: #059669;
+            --error-color: #dc2626;
         }
 
         * {
@@ -28,165 +30,122 @@
             color: var(--text-primary);
             line-height: 1.5;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            background-image: linear-gradient(135deg, #f6f8ff 0%, #f9fafb 100%);
         }
 
         .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
         }
 
-        .welcome-message {
-            font-size: 1.5rem;
+        h1 {
+            color: var(--text-primary);
+            font-size: 2rem;
             font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            background-color: rgba(5, 150, 105, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .success-message::before {
+            content: '✓';
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-info {
+            background-color: var(--background-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .user-info p {
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .user-info strong {
+            color: var(--text-primary);
+            font-weight: 500;
         }
 
         .logout-btn {
-            padding: 0.5rem 1rem;
-            background-color: var(--primary-color);
+            display: inline-block;
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
             color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.875rem;
+            text-decoration: none;
+            border-radius: 8px;
             font-weight: 500;
-            cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .logout-btn:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background-color: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .stat-card:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-title {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .activity-section {
-            background-color: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .activity-list {
-            list-style: none;
-        }
-
-        .activity-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-time {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .dashboard-container {
-                padding: 1rem;
+                padding: 2rem;
             }
 
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
+            h1 {
+                font-size: 1.75rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <div class="header">
-            <div class="welcome-message">Welcome, {{ username }}!</div>
-            <button class="logout-btn" onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+        <h1>Welcome to Your Dashboard</h1>
+        
+        <div class="success-message">
+            Successfully logged in with 2FA!
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-title">Total Logins</div>
-                <div class="stat-value">42</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Last Login</div>
-                <div class="stat-value">2 hours ago</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Security Status</div>
-                <div class="stat-value">Protected</div>
-            </div>
+        <div class="user-info">
+            <p><strong>Username:</strong> {{ username }}</p>
+            <p><strong>Last Login:</strong> {{ last_login }}</p>
+            <p><strong>Security Status:</strong> Protected with 2FA</p>
         </div>
 
-        <div class="activity-section">
-            <h2 class="section-title">Recent Activity</h2>
-            <ul class="activity-list">
-                <li class="activity-item">
-                    <span>Successful login from Chrome</span>
-                    <span class="activity-time">2 hours ago</span>
-                </li>
-                <li class="activity-item">
-                    <span>Password updated</span>
-                    <span class="activity-time">1 day ago</span>
-                </li>
-                <li class="activity-item">
-                    <span>2FA settings modified</span>
-                    <span class="activity-time">3 days ago</span>
-                </li>
-            </ul>
-        </div>
+        <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
 </body>
 </html> 

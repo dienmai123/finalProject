@@ -1,13 +1,259 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Verify 2FA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify 2FA - Secure Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --background-color: #f9fafb;
+            --card-bg: #ffffff;
+            --error-color: #dc2626;
+            --success-color: #059669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            background-image: linear-gradient(135deg, #f6f8ff 0%, #f9fafb 100%);
+        }
+
+        .verify-container {
+            background-color: var(--card-bg);
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verify-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+            border-radius: 3px;
+        }
+
+        .instructions {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .otp-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .otp-input-container {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .otp-input {
+            width: 100%;
+            height: 4.5rem;
+            font-size: 2rem;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--background-color);
+            transition: all 0.2s ease;
+            letter-spacing: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: scale(1.02);
+        }
+
+        .otp-input:not(:placeholder-shown) {
+            border-color: var(--primary-color);
+        }
+
+        .error {
+            color: var(--error-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.875rem;
+            background-color: rgba(220, 38, 38, 0.1);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+
+        .success {
+            color: var(--success-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 0.875rem;
+            background-color: rgba(5, 150, 105, 0.1);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            border: 1px solid rgba(5, 150, 105, 0.2);
+        }
+
+        button {
+            padding: 0.875rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .help-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+
+        .help-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .help-text a:hover {
+            color: var(--primary-hover);
+        }
+
+        @media (max-width: 480px) {
+            .verify-container {
+                padding: 2rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .otp-input {
+                height: 4rem;
+                font-size: 1.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Enter 6-digit OTP</h1>
-    <form method="POST">
-        <input type="text" name="otp" placeholder="123456" required>
-        <button type="submit">Verify</button>
-    </form>
+    <div class="verify-container">
+        <h1>Two-Factor Authentication</h1>
+        
+        <div class="instructions">
+            <p>Please enter the 6-digit verification code from your authenticator app to complete the login process.</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="error">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="otp-form">
+            <div class="otp-input-container">
+                <input type="text" name="otp" maxlength="6" pattern="[0-9]{6}" required autofocus
+                       class="otp-input" placeholder="•" inputmode="numeric">
+            </div>
+            
+            <button type="submit">Verify Code</button>
+        </form>
+
+        <div class="help-text">
+            <p>Having trouble? <a href="#">Get help with 2FA</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const otpInput = document.querySelector('.otp-input');
+            
+            // Auto-focus the input
+            otpInput.focus();
+            
+            // Handle input to ensure only numbers
+            otpInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Handle paste event
+            otpInput.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text');
+                this.value = pastedData.replace(/[^0-9]/g, '').substring(0, 6);
+            });
+        });
+    </script>
 </body>
 </html>

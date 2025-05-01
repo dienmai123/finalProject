@@ -132,6 +132,54 @@ def logout():
 def home():
     return redirect(url_for('login'))
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        username = request.form['username']
+        user = User.query.filter_by(username=username).first()
+        
+        if user:
+            # Generate reset token
+            token = user.generate_reset_token()
+            db.session.commit()
+            
+            # In a real application, you would send this link via email
+            # For demonstration, we'll just show it as a flash message
+            reset_link = url_for('reset_password', token=token, _external=True)
+            flash(f'Password reset link (for demonstration): {reset_link}')
+            return redirect(url_for('forgot_password'))
+        
+        flash('If a user exists with that username, a password reset link will be sent.')
+        return redirect(url_for('forgot_password'))
+    
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = User.query.filter_by(reset_token=token).first()
+    
+    if not user or not user.verify_reset_token(token):
+        flash('Invalid or expired reset link. Please try again.')
+        return redirect(url_for('forgot_password'))
+    
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('Passwords do not match.')
+            return redirect(url_for('reset_password', token=token))
+        
+        user.set_password(password)
+        user.reset_token = None
+        user.reset_token_expiry = None
+        db.session.commit()
+        
+        flash('Your password has been reset successfully. Please login with your new password.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html')
+
 # Run the application
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -11,6 +11,7 @@ A Flask-based two-factor authentication system using TOTP (compatible with Googl
 ```bash
 pip install flask pyotp qrcode[pil] flask-sqlalchemy
 pip install cryptography python-dotenv
+pip install python-dotenv
 ```
 
 ### 2. Initialize the Database

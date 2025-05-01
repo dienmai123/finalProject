@@ -10,17 +10,22 @@ A Flask-based two-factor authentication system using TOTP (compatible with Googl
 
 ```bash
 pip install flask pyotp qrcode[pil] flask-sqlalchemy
+pip install cryptography python-dotenv
 ```
 
 ### 2. Initialize the Database
 
 ```bash
-python3 -c "from app import app, db; app.app_context().push(); db.create_all()"
+python -c "from app import app, db; app.app_context().push(); db.create_all()"
+or
+python3 -c "from app import app, db; app.app_context().push(); db.create_all()" 
 ```
 
 ### 3. Run the Application
 
 ```bash
+python app.py
+or
 python3 app.py
 ```
 

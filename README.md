@@ -14,7 +14,7 @@ This is a Flask-based secure authentication system with:
 ### 📦 1. Clone the Repository
 
 ```bash
-[git clone https://github.com/YOUR_USERNAME/secure-2fa-app.git](https://github.com/dienmai123/finalProject.git)
+git clone https://github.com/dienmai123/finalProject.git
 cd finalProject
 ```
 

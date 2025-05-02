@@ -157,8 +157,8 @@ GitHub: [https://github.com/dienmai123](https://github.com/dienmai123)
 Hoc Nguyen - hocnguyen42804@gmail.com 
 GitHub: [https://github.com/HocNguyen123](https://github.com/HocNguyen123)
 
-An Nguyen - 
-
+An Nguyen - hongan.nguyen04@gmail.com
+GitHub: [https://github.com/Noctural123)(https://github.com/Noctural123)
 ---
 
 ## 📝 License

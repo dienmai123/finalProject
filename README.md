@@ -6,31 +6,57 @@ A Flask-based two-factor authentication system using TOTP (compatible with Googl
 
 ## 🚀 Quick Start
 
-### 1. Install Requirements
+### 📦 1. Clone the Repository
 
 ```bash
-pip install flask pyotp qrcode[pil] flask-sqlalchemy
-pip install cryptography python-dotenv
-pip install python-dotenv
+git clone https://github.com/YOUR_USERNAME/secure-2fa-app.git
+cd secure-2fa-app
 ```
 
-### 2. Initialize the Database
+---
+
+### 🔐 2. Environment Configuration
+
+This project includes a pre-configured `.env` file with demo-safe secrets:
+
+```env
+SECRET_KEY=dev-secret-key-123
+FERNET_KEY=OzH6BeFy8grcF5BXpY0dAixFyJK2xI-3qU9jPlycbKk=
+```
+
+> ⚠️ For demo use only. Do not reuse in production.
+
+If your `.env` is missing, run:
 
 ```bash
-python -c "from app import app, db; app.app_context().push(); db.create_all()"
-or
-python3 -c "from app import app, db; app.app_context().push(); db.create_all()" 
+cp .env.example .env
 ```
 
-### 3. Run the Application
+---
+
+### 🧰 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Or manually:
+
+```bash
+pip install Flask Flask-SQLAlchemy Flask-Migrate python-dotenv pyotp qrcode cryptography
+```
+
+---
+
+### 🧠 4. Initialize the Database (only needed if `2fa.db` is missing)
 
 ```bash
 python app.py
-or
-python3 app.py
 ```
 
-Visit: [http://localhost:5000](http://localhost:5000)
+This will:
+- Auto-create the SQLite DB (`2fa.db`)
+- Launch the web app on `http://localhost:5000`
 
 ---
 

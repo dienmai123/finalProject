@@ -196,6 +196,7 @@ def chat():
 
     user = User.query.get(session['user_id'])
     shared_password = request.form.get('shared_password')
+    sender_username = request.form.get('sender_username')
     action = request.form.get('action')
 
     # Handle Send
@@ -216,7 +217,7 @@ def chat():
         new_msg = Message(sender_id=user.id, receiver_id=receiver.id, ciphertext=encrypted)
         db.session.add(new_msg)
         db.session.commit()
-        flash('Message sent securely!')
+        flash('Message sent securely!', 'chat')
         return redirect(url_for('chat'))
 
     # Handle Decryption (or just viewing inbox)
@@ -224,32 +225,41 @@ def chat():
         (Message.sender_id == user.id) | (Message.receiver_id == user.id)
     ).order_by(Message.timestamp.desc()).all()
 
-    decrypted_messages = []
+    sent_messages = []
+    received_messages = []
+    
     for msg in messages_raw:
         sender_user = User.query.get(msg.sender_id)
         receiver_user = User.query.get(msg.receiver_id)
 
-        if msg.receiver_id == user.id:
-            if shared_password:
-                try:
-                    decrypted = decrypt_message(msg.ciphertext, shared_password).decode()
-                except Exception:
-                    decrypted = "[Decryption failed]"
-            else:
-                decrypted = "[🔒 Enter shared password to decrypt]"
-        else:
-            decrypted = "[📤 Message sent — content hidden here]"
-
-        decrypted_messages.append({
+        message_data = {
             'sender_id': msg.sender_id,
             'receiver_id': msg.receiver_id,
             'sender_username': sender_user.username if sender_user else "Unknown",
             'receiver_username': receiver_user.username if receiver_user else "Unknown",
             'timestamp': msg.timestamp,
-            'plaintext': decrypted
-        })
+            'plaintext': None
+        }
 
-    return render_template("chat.html", user=user, messages=decrypted_messages)
+        if msg.receiver_id == user.id:  # Received message
+            if shared_password and sender_username and sender_username == sender_user.username:
+                try:
+                    decrypted = decrypt_message(msg.ciphertext, shared_password).decode()
+                    message_data['plaintext'] = decrypted
+                except Exception:
+                    message_data['plaintext'] = "[Decryption failed]"
+            else:
+                message_data['plaintext'] = "[🔒 Enter shared password and sender username to decrypt]"
+            received_messages.append(message_data)
+        else:  # Sent message
+            message_data['plaintext'] = "[📤 Message sent — content hidden here]"
+            sent_messages.append(message_data)
+
+    return render_template("chat.html", 
+                         user=user, 
+                         sent_messages=sent_messages,
+                         received_messages=received_messages)
+
 # Run the application
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

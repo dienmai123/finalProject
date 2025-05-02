@@ -1,6 +1,11 @@
-# 🔒 Secure 2FA Authentication System
+# 🔐 Secure Flask App: 2FA + Encrypted Messaging
 
-A Flask-based two-factor authentication system using TOTP (compatible with Google Authenticator, Authy, etc.).
+This is a Flask-based secure authentication system with:
+- TOTP 2FA (e.g., Google Authenticator)
+- Encrypted chat via AES-CTR (shared password)
+- Password reset with expiring tokens
+- Safe `.env` config for secret management
+- SQLite database setup on first run
 
 ---
 
@@ -50,79 +55,112 @@ python app.py
 
 This will:
 - Auto-create the SQLite DB (`2fa.db`)
-- Launch the web app on `http://localhost:5000`
+- Launch the web app on: [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 🔐 How to Test the Login
+## 🔐 2FA Flow (Google Authenticator)
 
-### First-Time Setup
-
-1. Go to: [http://localhost:5000/register](http://localhost:5000/register)
-2. Create a new account
-3. Scan the QR code using:
+1. Go to: `/register` and create an account
+2. Scan the generated QR code using:
    - Google Authenticator
    - Authy
-   - Microsoft Authenticator
+3. Then go to `/login` and enter:
+   - Username and password
+   - 6-digit TOTP code from your app
 
-### Login Process
-
-1. Go to: [http://localhost:5000/login](http://localhost:5000/login)
-2. Enter your username and password
-3. Enter the 6-digit TOTP code from your authenticator app
+If the TOTP matches, you're logged in.
 
 ---
 
-## 🛠️ Project Structure
+## 💬 Secure Messaging (Encrypted Chat)
+
+1. After logging in, go to `/chat`
+2. Use a shared password to:
+   - Encrypt outgoing messages
+   - Decrypt incoming messages
+3. AES-CTR is used with PBKDF2 key derivation for encryption
+4. Messages are encrypted end-to-end
+
+> 🔐 The receiver must enter the same password and sender's username to decrypt
+
+---
+
+## 🔁 Password Reset Feature
+
+1. Go to `/forgot-password`
+2. Enter your username
+3. A reset token is generated (displayed in flash message for demo)
+4. Visit the reset link and set a new password
+
+---
+
+## 📂 File Structure
 
 ```
-2fa_project/
-├── app.py                # Main Flask application
-├── 2fa.db                # SQLite database (auto-generated)
+.
+├── app.py                # Main Flask routes and app logic
+├── crypto_utils.py       # AES-CTR encryption utilities
+├── models.py             # SQLAlchemy models: User + Message
+├── init_db.py            # Rebuild the database
+├── update_db.py          # Patch schema with missing columns
+├── .env                  # Secret & Fernet keys (demo-safe)
+├── .gitignore            # Excludes 2fa.db, __pycache__, etc.
 ├── templates/            # HTML templates
 │   ├── login.html
 │   ├── register.html
+│   ├── verify_2fa.html
 │   ├── setup_2fa.html
-│   └── verify_2fa.html
+│   ├── dashboard.html
+│   ├── forgot_password.html
+│   ├── reset_password.html
+│   └── chat.html
 ```
 
 ---
 
-## ❓ Troubleshooting
+## 🧪 Troubleshooting
 
-### "Invalid OTP" Errors
+### ❌ OTP Not Working?
 
-- Ensure your phone's time is synced to network time
-- Codes refresh every 30 seconds — try the next code
-- Re-scan the QR code if necessary
+- Make sure your phone's time is synced
+- TOTP codes refresh every 30s
+- Try re-scanning the QR code
 
-### Database Issues
+### ❌ Decryption Failed?
 
-If the database is corrupted or missing:
+- Ensure both users enter the **same password**
+- Sender's username must be correctly input by receiver
+- If decryption fails, message is marked as `[Decryption failed]`
+
+### 💥 DB Error?
 
 ```bash
 rm 2fa.db
-python3 -c "from app import app, db; app.app_context().push(); db.create_all()"
+python app.py
+```
+
+Or run:
+
+```bash
+python init_db.py  # To force rebuild
+python update_db.py  # To patch in missing columns
 ```
 
 ---
 
-## 🧪 Pro Tip: Generate Test Codes in Python
+## 👤 Authors
 
-```python
-import pyotp
-print(pyotp.TOTP("YOUR_SECRET_KEY").now())  # Replace with the actual secret
-```
+Dien Mai — mdien2610@gmail.com
+GitHub: [https://github.com/dienmai123](https://github.com/dienmai123)
+
+Hoc Nguyen - hocnguyen42804@gmail.com 
+GitHub: [https://github.com/HocNguyen123](https://github.com/HocNguyen123)
+
+An Nguyen - 
 
 ---
 
 ## 📝 License
 
-This project is licensed under the MIT License. See the `LICENSE` file for more info.
-
----
-
-## 👤 Author
-
-Dien Mai — mdien2610@gmail.com  
-GitHub: [https://github.com/dienmai123](https://github.com/dienmai123)
+MIT License — free to use, modify, and learn from.

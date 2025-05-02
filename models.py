@@ -12,10 +12,12 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password_hash = db.Column(db.String(120), nullable=False)
-    totp_secret_encrypted = db.Column(db.LargeBinary, nullable=True)
-    last_login = db.Column(db.DateTime, nullable=True)
+    username = db.Column(db.String(150), nullable=False, unique=True)
+    password_hash = db.Column(db.String(200), nullable=False)
+    totp_secret_encrypted = db.Column(db.String(300))
+    last_login = db.Column(db.DateTime)
+    reset_token = db.Column(db.String(100))
+    reset_token_expiry = db.Column(db.DateTime)
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

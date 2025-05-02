@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-import pyotp, qrcode, io, base64
-from models import db, User
-from datetime import datetime
-import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from dotenv import load_dotenv
+from datetime import datetime
+import os, pyotp, qrcode, io, base64
+
+from models import db, User  # db comes from models.py
 
 # Load environment variables from .env
 load_dotenv()
@@ -12,9 +14,12 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///2fa.db'
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']  # Load secret key securely
-db.init_app(app)
 
-# Create database tables
+# Register DB with app
+db.init_app(app)
+migrate = Migrate(app, db)
+
+# Auto-create tables if DB doesn't exist
 with app.app_context():
     db.create_all()
 

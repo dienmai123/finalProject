@@ -37,12 +37,6 @@ cp .env.example .env
 ### 🧰 3. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
-```
-
-Or manually:
-
-```bash
 pip install Flask Flask-SQLAlchemy Flask-Migrate python-dotenv pyotp qrcode cryptography
 ```
 
